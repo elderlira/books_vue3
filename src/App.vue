@@ -1,15 +1,18 @@
 <template>
   <div>
-    <div class="container">
+    <div class="container" v-if="!showComponent">
       <h1>📖 Meus Livros</h1>
       <div class="header-btns">
-        <button class="btn">Adicionar Livro +</button>
+        <button class="btn" @click="changeComponent">Adicionar Livro +</button>
       </div>
 
       <div class="books-container">
         <Books :books="books" @lido="mudarStatus" />
-        <Progress :progresso="books" />
+        <Progress :progresso="books" :show="showComponent" />
       </div>
+    </div>
+    <div v-else class="container">
+      <AddBooks @close="fecharComponente" @addBook="addBook" />
     </div>
   </div>
 </template>
@@ -17,7 +20,8 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue";
 import Books from "./components/Books.vue";
-import Progress from "./components/Progress.vue";
+import Progress from "./components/BooksProgress.vue";
+import AddBooks from "./components/AddBooks.vue";
 
 const books = reactive([
   {
@@ -64,6 +68,21 @@ const mudarStatus = (index) => {
       b.isRead = !b.isRead;
     }
   });
+};
+
+let showComponent = ref(false);
+const changeComponent = () => {
+  showComponent.value = !showComponent.value;
+};
+
+const fecharComponente = (value) => {
+  showComponent.value = value;
+};
+
+const addBook = (obj) => {
+  obj.id = books.length + 1;
+  books.push(obj);
+  console.log(obj);
 };
 </script>
 
